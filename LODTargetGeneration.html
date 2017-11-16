@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+<!--
+	Generates the LOD Target, to test different approaches to build the LOD Target visualization.
+	So far the best option is:
+	- Generate the Target without connection information (actually generating with the full information but removing "lines" afterwards)
+	- Load resulting SVG (~254kb instead of the original 3-2 Mb)
+	- Load and compute connections on the fly
+ -->
+<body>
+<link href="./css/LODTarget.css" rel="stylesheet">
+<svg id="LOD" viewBox="-500 -500 1000 1000" width="100%" height="100%"></svg>
+<script src="js/d3/d3.min.js"></script>
+<script src="js/d3/d3-scale-chromatic.v1.min.js"></script>
+<script src="js/d3/d3-queue.min.js"></script>
+<script src="js/LODTarget.js"></script>
+</script>
+</body>
+</html>

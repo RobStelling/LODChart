@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<!--
+  Second take on the LOD Cloud 2017 data, force field over SVG
+-->
+<meta charset="utf-8">
+<style>
+
+body {
+  font: 10px sans-serif;
+}
+
+
+.links line {
+  stroke: #999;
+  stroke-opacity: 0.1;
+}
+
+.nodes circle {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+</style>
+<svg id="LOD" viewBox="0 0 1900 1900" width="100%" height="100%"></svg>
+<script src="js/d3/d3.min.js"></script>
+<script>
+var groups = ["Publications", "Cross_domain", "Linguistics", "Geography", "Government", "User_generated", "Life_sciences", "Media", "Social_networking"], groupCount = [], genLODg, hashNodes = [], hashId = [];
+var adjancencyMatrix; 
+
+
+var svg = d3.select("svg"),
+    //context = canvas.getContext("2d"),
+    width = +svg.attr("viewBox").split(" ")[2],
+    height = +svg.attr("viewBox").split(" ")[3];
+var color = ['#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6'];
+
+var simulation = d3.forceSimulation()
+    .velocityDecay(0.40)
+    .force("enlace", d3.forceLink().id(function(d) { return d.id; }))
+    .force("carga", d3.forceManyBody().strength(-3.5))
+    .force("centro", d3.forceCenter(width / 2, height / 2));
+
+d3.json("./json/graphFile22-08-2017.json", function(error, LODgraph) { // graphFile22-08-2017.json
+  if (error) throw error;
+  var nodeSpace = LODgraph.nodes.length, linkSpace = LODgraph.links.length;
+
+  var j, k;
+  
+  genLODg = LODgraph;
+
+  for (k=0; k<LODgraph.nodes.length; k++) {
+    hashNodes[LODgraph.nodes[k].id] = 1;
+    hashId[LODgraph.nodes[k].id] = k;
+    LODgraph.nodes[k].id = k;
+  }
+
+  for (k=0; k<LODgraph.links.length; k++) {
+    if (hashNodes[LODgraph.links[k].source] == undefined || hashNodes[LODgraph.links[k].target] == undefined)
+      LODgraph.links[k].stale = true;
+    else {
+      LODgraph.links[k].source = hashId[LODgraph.links[k].source];
+      LODgraph.links[k].target = hashId[LODgraph.links[k].target];
+    }
+  }
+
+  for (k=0; k<LODgraph.links.length; k++)
+    if (LODgraph.links[k].stale) {
+      LODgraph.links.splice(k,1);
+      k--;
+    }
+
+  linkSpace = LODgraph.links.length;
+
+  adjancencyMatrix = new Array(nodeSpace);
+
+  // Create hashId
+  for (k = 0; k<nodeSpace; k++)
+    adjancencyMatrix[k] = new Array(nodeSpace);
+  // Fill adjancency Matrix
+  for (k = 0; k<linkSpace; k++)
+    adjancencyMatrix[LODgraph.links[k].source][LODgraph.links[k].target] = LODgraph.links[k].weight;
+  for (j = 0; j<nodeSpace; j++)
+    for (k = 0; k<nodeSpace; k++)
+      if (!adjancencyMatrix[j][k])
+        adjancencyMatrix[j][k] = 0;
+
+  for (k = 0; k<nodeSpace; k++)
+    if (!groups.includes(LODgraph.nodes[k].group)) {
+      groups.push(LODgraph.nodes[k].group);
+      groupCount[LODgraph.nodes[k].group] = 1;
+    } else
+      groupCount[LODgraph.nodes[k].group]++;
+
+  gCountSorted = Object.keys(groupCount).sort(function(a,b){return groupCount[b]-groupCount[a];});
+  
+
+
+  var graph = LODgraph;
+
+  var link = svg.append("g")
+        .attr("class", "links")
+      .selectAll("line")
+      .data(graph.links)
+      .enter().append("line")
+        .attr("stroke-width", function(d){return Math.log10(+d.weight);});
+  var node = svg.append("g")
+        .attr("class", "nodes")
+      .selectAll("circle")
+      .data(graph.nodes)
+      .enter().append("circle")
+        .attr("r", function(d){return Math.log10(Math.max(1000, d.triples));})
+        .attr("fill",
+          function(d){return color[groups.findIndex(function(g){return g == d.group;})];})
+        .call(d3.drag()
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended));
+  node.append("title")
+      .text(function(d){return d.name});
+
+
+
+  simulation
+      .nodes(graph.nodes)
+      .on("tick", ticked);
+
+  simulation.force("enlace")
+      .links(graph.links);
+
+
+  function ticked() {
+    link
+        .attr("x1", function(d){return d.source.x;})
+        .attr("y1", function(d){return d.source.y;})
+        .attr("x2", function(d){return d.target.x;})
+        .attr("y2", function(d){return d.target.y;});
+    node
+        .attr("cx", function(d){return d.x;})
+        .attr("cy", function(d){return d.y;});
+  }
+
+});
+
+function dragstarted(d) {
+  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+  d.fx = d.x;
+  d.fy = d.y;
+}
+
+function dragged(d) {
+  d.fx = d3.event.x;
+  d.fy = d3.event.y;
+}
+
+function dragended(d) {
+  if (!d3.event.active) simulation.alphaTarget(0);
+  d.fx = null;
+  d.fy = null;
+}
+
+</script>

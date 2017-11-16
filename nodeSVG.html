@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  font: 10px sans-serif;
+}
+
+
+.links line {
+  stroke: #666;
+  stroke-opacity: 0.6;
+}
+
+.nodes circle {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+</style>
+<svg id="LOD" viewBox="-850 -850 1700 1700" width="100%" height="100%"></svg>
+<script src="js/d3/d3.min.js"></script>
+<script src="js/d3/d3-scale-chromatic.v1.min.js"></script>
+<script src="js/d3/d3-queue.min.js"></script>
+<script>
+/*
+ * Todo list:
+ * x Include static reference do d3.v4.min.js
+ * - Cleanup and comment code
+ * - Isolate adjancency matrix code (will belong to a different visualization)
+ * - Prepare to dinamically select a group or set of groups (currently using separate files)
+ * - Verify SVG attributes
+ * - Play with force field models
+ * - Review links color schema
+ * - Review group color schema (currently Colorbrewer2 categorical, 9 colors)
+ * - Separate files (css, js, html)
+ * x Review code for groupCount
+ */
+const ALL = "all";
+var groups = ["Publications", "Cross_domain", "Linguistics", "Geography", "Government",
+              "User_generated", "Life_sciences", "Media", "Social_networking"],
+    groupNL = [],     // Node-link structure for each one of the groups (with links within the same group)
+    mapNodes = [],    // Node index conversion for groups
+    adjancencyMatrix = []; // Adjancency matrix for a group and the whole graph
+
+
+
+var svg = d3.select("svg");
+    //context = canvas.getContext("2d"),
+    //width = +svg.attr("viewBox").split(" ")[2], //svg.attr("viewBox").split(" ")[0],
+    //height = +svg.attr("viewBox").split(" ")[3];
+
+var color = d3.schemePaired; /*
+            ['#a6cee3', // From Colorbrewer2, categorical, 9
+             '#1f78b4',
+             '#b2df8a',
+             '#33a02c',
+             '#fb9a99',
+             '#e31a1c',
+             '#fdbf6f',
+             '#ff7f00',
+             '#cab2d6']; */
+
+var simulation = d3.forceSimulation()
+    .velocityDecay(0.40)
+    //.force("r", d3.forceRadial(function(d) {
+    //                              var r={ Media:50, Geography:100, Cross_domain:150, User_generated:200, Linguistics: 250,
+    //                                      Government:300, Publications:350, Social_networking: 400, Life_sciences: 450};
+    //                              return r[d.group];}))
+    .force("enlaces", d3.forceLink().id(function(d) { return d.id; }))
+    .force("carga", d3.forceManyBody().strength(-3.5))
+    .force("colisao", d3.forceCollide(function(d){ return d.radius; }).strength(1))
+    .force("centro", d3.forceCenter(0, 0));
+
+adjancencyMatrix[ALL] = [];
+
+for (var i = 0; i<groups.length;i++) {
+  groupNL[groups[i]] = {links: [], nodes:[]};
+  adjancencyMatrix[groups[i]] = [];
+  mapNodes[groups[i]] = {};
+}
+
+
+d3.json("./json/graphFile22-08-2017.json", function(error, LODgraph) { // graphFile22-08-2017.json
+  if (error) throw error;
+  
+  var nodeSpace = LODgraph.nodes.length,  // Total # of nodes and links
+      linkSpace = LODgraph.links.length;
+
+  var j, k;
+
+  /*
+   * Goes through all nodes and creates all sub-groups self-referencing structures
+   * Uses group name (LODgraph.nodes[k].group) to index groupNL object
+   * Assign radius to nodes
+   */
+  for (k=0; k<LODgraph.nodes.length; k++) {
+    LODgraph.nodes[k].radius = Math.max(5, Math.log(LODgraph.nodes[k].triples));
+    groupNL[LODgraph.nodes[k].group].nodes.push(LODgraph.nodes[k]);
+  }
+  /*
+   * Goes through all links ans adds groups self-referencing links
+   * (EG: Geography->Geography) to their corresponding group.
+   */
+  for (k=0; k<LODgraph.links.length; k++) {
+    if (LODgraph.nodes[LODgraph.links[k].source].group == LODgraph.nodes[LODgraph.links[k].target].group) {
+      var g = LODgraph.nodes[LODgraph.links[k].source].group;
+      groupNL[g].links.push(LODgraph.links[k]);
+    }
+  }
+
+  /*
+   * Builds the adjancency matrix
+   */
+  adjancencyMatrix[ALL] = new Array(nodeSpace);
+  for (j in groups)
+    adjancencyMatrix[groups[j]] = new Array(groupNL[groups[j]].nodes.length);
+
+  for (k = 0; k<nodeSpace; k++)
+    adjancencyMatrix[ALL][k] = new Array(nodeSpace);
+  for (j in groups) {
+    var gSpace = groupNL[groups[j]].nodes.length;
+    for (k = 0; k<gSpace;k++) {
+      mapNodes[groups[j]][groupNL[groups[j]].nodes[k].id] = k;
+      adjancencyMatrix[groups[j]][k] = new Array(gSpace);
+    }
+  }
+
+  // Fills in adjancency Matrix
+  for (k = 0; k<linkSpace; k++)
+    adjancencyMatrix[ALL][LODgraph.links[k].source][LODgraph.links[k].target] = LODgraph.links[k].weight;
+  for (j in groups) {
+    var gSpace = groupNL[groups[j]].links.length;
+    for (k = 0; k<gSpace; k++) {
+      var source = groupNL[groups[j]].links[k].source,
+          target = groupNL[groups[j]].links[k].target;
+      adjancencyMatrix[groups[j]][mapNodes[groups[j]][source]][mapNodes[groups[j]][target]] = groupNL[groups[j]].links[k].weight;
+    }
+  }
+
+
+  for (j = 0; j<nodeSpace; j++)
+    for (k = 0; k<nodeSpace; k++)
+      if (!adjancencyMatrix[ALL][j][k])
+        adjancencyMatrix[ALL][j][k] = 0;
+
+  var links, nodes;
+  links = svg.append("g")
+        .attr("class", "links")
+      .selectAll("line")
+      .data(LODgraph.links)
+      .enter().append("line")
+        .attr("class", function(d){return "S"+d.source+" "+"T"+d.target;})
+        .attr("stroke-width", function(d){return Math.log10(+d.weight);});
+        
+  nodes = svg.append("g")
+        .attr("class", "nodes")
+      .selectAll("circle")
+      .data(LODgraph.nodes)
+      .enter().append("circle")
+        .attr("r", function(d){return d.radius;})
+        .attr("fill",
+          function(d){return color[groups.findIndex(function(g){return g == d.group;})];})
+        .attr("id", function(d){return "N"+d.id;})
+        .attr("class", function(d){return d.group;})
+        .call(d3.drag()
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended));
+
+  nodes.append("title")
+      .text(function(d){return d.title+"\nGroup: "+d.group+"\nTriples: "+d.triples.toLocaleString()+"\nLast modified: "+d.Last_modified;});
+
+  simulation
+      .nodes(LODgraph.nodes)
+      .on("tick", ticked);
+
+  simulation.force("enlaces")
+      .links(LODgraph.links);
+
+  function ticked() {
+    links
+        .attr("x1", function(d){return d.source.x;})
+        .attr("y1", function(d){return d.source.y;})
+        .attr("x2", function(d){return d.target.x;})
+        .attr("y2", function(d){return d.target.y;});
+    nodes
+        .attr("cx", function(d){return d.x;})
+        .attr("cy", function(d){return d.y;});
+  }
+
+});
+
+function dragstarted(d) {
+  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+  d.fx = d.x;
+  d.fy = d.y;
+}
+
+function dragged(d) {
+  d.fx = d3.event.x;
+  d.fy = d3.event.y;
+}
+
+function dragended(d) {
+  if (!d3.event.active) simulation.alphaTarget(0);
+  d.fx = null;
+  d.fy = null;
+}
+</script>
