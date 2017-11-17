@@ -64,8 +64,8 @@ d3.json("./json/graphFile22-08-2017.json", function(error, LODgraph) { // graphF
   simulation = d3.forceSimulation(LODgraph.nodes)
       .velocityDecay(0.40)
       .force("r", d3.forceRadial(function(d) {
-                                    var r={ Media:115, Geography:45, Cross_domain:156, User_generated:220, Linguistics: 267,
-                                            Government:326, Publications:383, Social_networking: 195, Life_sciences: 433};
+                                    var r={ Media:113, Geography:45, Cross_domain:150, User_generated:208, Linguistics: 256,
+                                            Government:318, Publications:372, Social_networking: 182, Life_sciences: 422};
                                     return r[d.group];}).strength(1))
       .force("colisao", d3.forceCollide(function(d){ return d.radius; }).strength(1))
       .stop();
