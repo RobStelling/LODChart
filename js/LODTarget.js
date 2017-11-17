@@ -104,28 +104,29 @@ d3.json("./json/graphFile22-08-2017.json", function(error, LODgraph) { // graphF
 
   nodes.append("title")
       .text(function(d){
+        var creator = "";
         if (d.Creator != undefined)
-          return `${d.title}\nCreator: ${d.Creator}\nGroup: ${d.group}\nTriples: ${d.triples.toLocaleString()}\nLast modified: ${d.Last_modified}`;
-        return `${d.title}\nGroup: ${d.group}\nTriples: ${d.triples.toLocaleString()}\nLast modified: ${d.Last_modified}`;
+          creator = "\nCreator: "+d.Creator;
+        return `${d.title}${creator}\nGroup: ${d.group}\nTriples: ${d.triples.toLocaleString()}\nLast modified: ${d.Last_modified}`;
       });
 
 // Need to add code to "cleanup" SVG attributes:
 // round r, cx, cy on circles and x1, y1, x2, y2, stroke-width on lines to 2 decimal points
 // before generating SVG file
 
-var svgSave = document.getElementById("LOD");
-//get svg source.
-var serializer = new XMLSerializer();
-var svgData = serializer.serializeToString(svgSave);
-//var svgData = $("#LOD")[0].outerHTML;
-var svgBlob = new Blob([svgData], {type:"image/svg+xml;charset=utf-8"});
-var svgUrl = URL.createObjectURL(svgBlob);
-var downloadLink = document.createElement("a");
-downloadLink.href = svgUrl;
-downloadLink.download = "LODTarget.svg";
-document.body.appendChild(downloadLink);
-downloadLink.click();
-document.body.removeChild(downloadLink);
+  var svgSave = document.getElementById("LOD");
+  //get svg source.
+  var serializer = new XMLSerializer();
+  var svgData = serializer.serializeToString(svgSave);
+  //var svgData = $("#LOD")[0].outerHTML;
+  var svgBlob = new Blob([svgData], {type:"image/svg+xml;charset=utf-8"});
+  var svgUrl = URL.createObjectURL(svgBlob);
+  var downloadLink = document.createElement("a");
+  downloadLink.href = svgUrl;
+  downloadLink.download = "LODTarget.svg";
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
 
   function mouseOver(d) {
     return;

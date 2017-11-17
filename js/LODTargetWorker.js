@@ -98,23 +98,28 @@ d3.json("./json/graphFile22-08-2017.json", function(error, LODgraph) { // graphF
 	      .attr("cx", function(d){return twoDigits(d.x);})
 	      .attr("cy", function(d){return twoDigits(d.y);});
 
-	svgLinks.selectAll("line")
-	    .data(links)
-	    .enter().append("line")
-	      .attr("class", function(d){return "S"+d.source+" "+"T"+d.target;})
-	      .attr("stroke-width", function(d){return twoDigits(Math.max(1, Math.log10(+d.weight)));})
-	      .attr("x1", function(d){return twoDigits(d3.select("#N"+d.source).data()[0].x);})
-	      .attr("y1", function(d){return twoDigits(d3.select("#N"+d.source).data()[0].y);})
-	      .attr("x2", function(d){return twoDigits(d3.select("#N"+d.target).data()[0].x);})
-	      .attr("y2", function(d){return twoDigits(d3.select("#N"+d.target).data()[0].y);})
-	      .style("opacity", 0);
-
 	svgNodes.append("title")
 	    .text(function(d){
+	    	var creator = "";
 	    	if (d.Creator != undefined)
-	    		return `${d.title}\nCreator: ${d.Creator}\nGroup: ${d.group}\nTriples: ${d.triples.toLocaleString()}\nLast modified: ${d.Last_modified}`;
-	    	return `${d.title}\nGroup: ${d.group}\nTriples: ${d.triples.toLocaleString()}\nLast modified: ${d.Last_modified}`;
+	    		creator = "\nCreator: "+d.Creator;
+	    	return `${d.title}${creator}\nGroup: ${d.group}\nTriples: ${d.triples.toLocaleString()}\nLast modified: ${d.Last_modified}`;
 	    });
 
+	// setTimeout is called here to force the immediate display of the graph (circles),
+	// while invisible links are computed separately. Delay could even be 0, with the same result
+	setTimeout(
+		function(){
+		  svgLinks.selectAll("line")
+		    .data(links)
+		    .enter().append("line")
+		      .attr("class", function(d){return "S"+d.source+" "+"T"+d.target;})
+		      .attr("stroke-width", function(d){return twoDigits(Math.max(1, Math.log10(+d.weight)));})
+		      .attr("x1", function(d){return twoDigits(d3.select("#N"+d.source).data()[0].x);})
+		      .attr("y1", function(d){return twoDigits(d3.select("#N"+d.source).data()[0].y);})
+		      .attr("x2", function(d){return twoDigits(d3.select("#N"+d.target).data()[0].x);})
+		      .attr("y2", function(d){return twoDigits(d3.select("#N"+d.target).data()[0].y);})
+		      .style("opacity", 0);
+		    }, 1);
   }
 });
