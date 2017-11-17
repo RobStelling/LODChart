@@ -55,7 +55,7 @@ d3.json("./json/graphFile22-08-2017.json", function(error, LODgraph) { // graphF
   }
 
   var meter = document.querySelector("#progress"),
-  	  worker = new Worker("js/worker.js");
+  	  worker = new Worker("js/LTSim.js");
 
   worker.postMessage({nodes: LODgraph.nodes});
 
