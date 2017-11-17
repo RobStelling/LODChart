@@ -30,6 +30,11 @@ for (var i = 0; i<groups.length;i++)
   groupNL[groups[i]] = {links: [], nodes:[]};
 
 d3.json("./json/graphFile22-08-2017.json", function(error, LODgraph) { // graphFile22-08-2017.json
+
+  function twoDigits(number) {
+    return Math.round(number*100)/100;
+  }
+
   if (error) throw error;
 
   var k, links, nodes, simulation;
@@ -77,28 +82,32 @@ d3.json("./json/graphFile22-08-2017.json", function(error, LODgraph) { // graphF
       .selectAll("circle")
       .data(LODgraph.nodes)
       .enter().append("circle")
-        .attr("r", function(d){return d.radius;})
+        .attr("r", function(d){return twoDigits(d.radius);})
         .attr("fill",
           function(d){return color[groups.findIndex(function(g){return g == d.group;})];})
         .attr("id", function(d){return "N"+d.id;})
         .attr("class", function(d){return d.group;})
-        .attr("cx", function(d){return d.x;})
-        .attr("cy", function(d){return d.y;});
+        .attr("cx", function(d){return twoDigits(d.x);})
+        .attr("cy", function(d){return twoDigits(d.y);});
 
   links.selectAll("line")
       .data(LODgraph.links)
       .enter().append("line")
         .attr("class", function(d){return "S"+d.source+" "+"T"+d.target;})
-        .attr("stroke-width", function(d){return Math.max(1, Math.log10(+d.weight));})
-        .attr("x1", function(d){return d3.select("#N"+d.source).data()[0].x;})
-        .attr("y1", function(d){return d3.select("#N"+d.source).data()[0].y;})
-        .attr("x2", function(d){return d3.select("#N"+d.target).data()[0].x;})
-        .attr("y2", function(d){return d3.select("#N"+d.target).data()[0].y;})
+        .attr("stroke-width", function(d){return twoDigits(Math.max(1, Math.log10(+d.weight)));})
+        .attr("x1", function(d){return twoDigits(d3.select("#N"+d.source).data()[0].x);})
+        .attr("y1", function(d){return twoDigits(d3.select("#N"+d.source).data()[0].y);})
+        .attr("x2", function(d){return twoDigits(d3.select("#N"+d.target).data()[0].x);})
+        .attr("y2", function(d){return twoDigits(d3.select("#N"+d.target).data()[0].y);})
         .style("opacity", 0);
        
 
   nodes.append("title")
-      .text(function(d){return d.title+"\nGroup: "+d.group+"\nTriples: "+d.triples.toLocaleString()+"\nLast modified: "+d.Last_modified;});
+      .text(function(d){
+        if (d.Creator != undefined)
+          return `${d.title}\nCreator: ${d.Creator}\nGroup: ${d.group}\nTriples: ${d.triples.toLocaleString()}\nLast modified: ${d.Last_modified}`;
+        return `${d.title}\nGroup: ${d.group}\nTriples: ${d.triples.toLocaleString()}\nLast modified: ${d.Last_modified}`;
+      });
 
 // Need to add code to "cleanup" SVG attributes:
 // round r, cx, cy on circles and x1, y1, x2, y2, stroke-width on lines to 2 decimal points
