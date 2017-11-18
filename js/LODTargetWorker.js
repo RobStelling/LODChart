@@ -107,7 +107,7 @@ d3.json("./json/graphFile22-08-2017.json", function(error, LODgraph) { // graphF
 	    });
 
 	// setTimeout is called here to force the immediate display of the graph (circles),
-	// while invisible links are computed separately. Delay could even be 0, with the same result
+	// while invisible links are computed separately. Zero Timeout.
 	setTimeout(
 		function(){
 		  svgLinks.selectAll("line")
@@ -120,6 +120,6 @@ d3.json("./json/graphFile22-08-2017.json", function(error, LODgraph) { // graphF
 		      .attr("x2", function(d){return twoDigits(d3.select("#N"+d.target).data()[0].x);})
 		      .attr("y2", function(d){return twoDigits(d3.select("#N"+d.target).data()[0].y);})
 		      .style("opacity", 0);
-		    }, 1);
+		    });
   }
 });
