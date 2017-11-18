@@ -69,9 +69,9 @@ d3.json("./json/graphFile22-08-2017.json", function(error, LODgraph) { // graphF
                                     return r[d.group];}).strength(1))
       .force("colisao", d3.forceCollide(function(d){ return d.radius; }).strength(1))
       .stop();
-// for (var i = 0, n = Math.ceil(Math.log(simulation.alphaMin()) / Math.log(1 - simulation.alphaDecay())); i < n; ++i)
-// n = 300
-  for (var i = 0; i < 450; ++i)
+//for (var i = 0; i < 450; ++i)
+// 1.15 ~= 345 times
+  for (var i = 0, n = Math.ceil(1.15 * Math.log(simulation.alphaMin()) / Math.log(1 - simulation.alphaDecay())); i < n; ++i)
     simulation.tick();
 
   links = svg.append("g")
