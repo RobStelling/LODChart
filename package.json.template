@@ -1,0 +1,26 @@
+{
+	"name": "LODTarget",
+	"version": "0.1.0",
+	"description": "Visualization experiment for the LOD Cloud",
+	"keywords": [
+		"LOD",
+		"LODCloud",
+		"visualization",
+		"D3"
+	],
+	"homepage": "http://stelling.cc/LODChart",
+	"author": {
+		"name": "Roberto Stelling",
+		"url": "http://stelling.cc"
+	},
+	"bugs" : {
+		"url": "https://github.com/RobStelling/LODChart/issues",
+		"email": "roberto@stelling.cc"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/RobStelling/LODChart.git"
+	},
+	"license": "CC-BY-NC-4.0",
+	"main": "index.js"
+}
