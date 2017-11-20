@@ -16,9 +16,9 @@ onmessage = function(event) {
       .stop();
 // 1.15 ~= 345 times
   for (var i = 0, n = Math.ceil(1.15 * Math.log(simulation.alphaMin()) / Math.log(1 - simulation.alphaDecay())); i < n; ++i) {
-    postMessage({type: "tick", progress: i / n});
+    postMessage({type: "tick", progress: i / n}, undefined);
     simulation.tick();
   }
 
-  postMessage({type: "end", nodes: nodes});
+  postMessage({type: "end", nodes: nodes}, undefined);
 };

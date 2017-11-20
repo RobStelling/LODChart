@@ -11,7 +11,7 @@
  * X Separate files (css, js, html)
  * X Review code for groupCount
  */
-const ALL = "all";
+//const ALL : string = "all";
 // Order for d3.schemeSet1
 // var color = d3.schemeSet1; // From Colorbrewer2, categorical, 9
 //var groups = ["Life_sciences", "Geography", "Linguistics", "User_generated", "Government",
@@ -21,7 +21,7 @@ const ALL = "all";
 //              "User_generated", "Life_sciences", "Media", "Social_networking"],
 
 var color = d3.schemePaired;
-var groups = ["Cross_domain", "Geography", "Media", "Linguistics", "User_generated",
+var groups : string[] = ["Cross_domain", "Geography", "Media", "Linguistics", "User_generated",
               "Life_sciences", "Publications", "Government", "Social_networking"],
     groupNL = [],     // Node-link structure for each one of the groups (with links within the same group)
     svg = d3.select("svg");
@@ -37,7 +37,7 @@ d3.json("./json/graphFile22-08-2017.json", function(error, LODgraph) { // graphF
 
   if (error) throw error;
 
-  var k, links, nodes, simulation;
+  var k : number, links, nodes, simulation;
 
   /*
    * Goes through all nodes and creates all sub-groups self-referencing structures

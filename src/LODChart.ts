@@ -1,13 +1,13 @@
 
 var margin = {top: 20, right: 120, bottom: 20, left: 120},
-    width = 950 - margin.right - margin.left,
-    height = 950 - margin.top - margin.bottom;
+    width : number = 950 - margin.right - margin.left,
+    height : number = 950 - margin.top - margin.bottom;
 
-var index = 0,
-    duration = 750,
-    depth = 70,
+var index : number = 0,
+    duration : number = 750,
+    depth : number = 70,
     root,
-    groups = [];
+    groups : string[] = [];
 
 var adjancencyMatrix;
 
