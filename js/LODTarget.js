@@ -1,24 +1,3 @@
-/*
- * Todo list:
- * x Include static reference do d3.v4.min.js
- * - Cleanup and comment code
- * X Isolate adjancency matrix code (will belong to a different visualization)
- * X Prepare to dinamically select a group or set of groups (currently using separate files)
- * X Verify SVG attributes
- * X Play with force field models
- * - Review links color schema
- * X Review group color schema (currently Colorbrewer2 categorical, 9 colors)
- * X Separate files (css, js, html)
- * X Review code for groupCount
- */
-//const ALL : string = "all";
-// Order for d3.schemeSet1
-// var color = d3.schemeSet1; // From Colorbrewer2, categorical, 9
-//var groups = ["Life_sciences", "Geography", "Linguistics", "User_generated", "Government",
-//              "Publications", "Cross_domain", "Media", "Social_networking"],
-// Original proposed order for d3.schemePaired
-//var groups = ["Publications", "Cross_domain", "Linguistics", "Geography", "Government",
-//              "User_generated", "Life_sciences", "Media", "Social_networking"],
 var color = d3.schemePaired;
 var groups = ["Cross_domain", "Geography", "Media", "Linguistics", "User_generated",
     "Life_sciences", "Publications", "Government", "Social_networking"], groupNL = [], // Node-link structure for each one of the groups (with links within the same group)

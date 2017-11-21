@@ -19,6 +19,7 @@
 // Original proposed order for d3.schemePaired
 //var groups = ["Publications", "Cross_domain", "Linguistics", "Geography", "Government",
 //              "User_generated", "Life_sciences", "Media", "Social_networking"],
+declare var d3:any;
 
 var color = d3.schemePaired;
 var groups : string[] = ["Cross_domain", "Geography", "Media", "Linguistics", "User_generated",

@@ -11,6 +11,8 @@
  * X Separate files (css, js, html)
  * X Review code for groupCount
  */
+declare var d3:any;
+
 const ALL = "all";
 // Order for d3.schemeSet1
 // var color = d3.schemeSet1; // From Colorbrewer2, categorical, 9

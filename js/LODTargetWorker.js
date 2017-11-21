@@ -1,16 +1,3 @@
-/*
- * Todo list:
- * x Include static reference do d3.v4.min.js
- * - Cleanup and comment code
- * X Isolate adjancency matrix code (will belong to a different visualization)
- * X Prepare to dinamically select a group or set of groups (currently using separate files)
- * X Verify SVG attributes
- * X Play with force field models
- * - Review links color schema
- * X Review group color schema (currently Colorbrewer2 categorical, 9 colors)
- * X Separate files (css, js, html)
- * X Review code for groupCount
- */
 var ALL = "all";
 // Order for d3.schemeSet1
 // var color = d3.schemeSet1; // From Colorbrewer2, categorical, 9

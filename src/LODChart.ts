@@ -1,3 +1,4 @@
+declare var d3:any;
 
 var margin = {top: 20, right: 120, bottom: 20, left: 120},
     width : number = 950 - margin.right - margin.left,

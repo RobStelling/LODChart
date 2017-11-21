@@ -1,3 +1,4 @@
+declare var d3:any;
 importScripts("d3/d3.min.js");
 
 onmessage = function(event) {
