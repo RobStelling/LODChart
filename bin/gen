@@ -1,0 +1,7 @@
+#!/bin/sh
+home="/home/roberto/htdocs/LODChart"
+if ! [ -d $home ]
+then
+    home="/media/stelling/OS/xampp/htdocs/LODChart"
+fi
+cd $home && tsc
