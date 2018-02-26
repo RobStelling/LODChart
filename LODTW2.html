@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+<body>
+<link href="./css/LODTarget.css" rel="stylesheet">
+<!--
+	Progress bar and web worker implementation based on:
+	https://bl.ocks.org/mbostock/01ab2e85e8727d6529d20391c0fd9a16
+
+	Todo:
+	- progress bar stay on top of corresponding SVG, using its width as percentage complection, instead of the whole screem.
+	  - Alternatively, progress bar inside SVG
+  -->
+<div id="progress"></div>
+<style>
+#progress {
+  position: fixed;
+  top: 0;
+  left: -6px;
+  width: 0%;
+  height: 2px;
+  background: red;
+}
+#progress:before,
+#progress:after {
+  content: "";
+  position: absolute;
+  height: 2px;
+  opacity: 0.6;
+  box-shadow: red 1px 0 6px 1px;
+  border-radius: 100%;
+}
+#progress:before {
+  width: 20px;
+  right: 0;
+  clip: rect(-6px, 22px, 14px, 10px);
+}
+#progress:after {
+  width: 180px;
+  right: -80px;
+  clip: rect(-6px, 90px, 14px, -6px);
+}
+</style>
+<svg id="LOD" viewBox="-500 -500 1000 1000" width="800" height="800"></svg>
+<script src="js/d3/d3.min.js"></script>
+<script src="js/d3/d3-scale-chromatic.v1.min.js"></script>
+<script src="js/LODtw2.js"></script>
+</script>
+</body>
+</html>
