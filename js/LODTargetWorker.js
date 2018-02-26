@@ -12,6 +12,7 @@ var groups = ["Cross_domain", "Geography", "Media", "Linguistics", "User_generat
 svg = d3.select("svg");
 for (var i = 0; i < groups.length; i++)
     groupNL[groups[i]] = { links: [], nodes: [] };
+
 d3.json("./json/graphFile22-08-2017.json", function (error, LODgraph) {
     if (error)
         throw error;
