@@ -36,16 +36,17 @@ d3.json("./json/graphFile22-08-2017.json", function (error, LODgraph) {
     simulation = d3.forceSimulation(LODgraph.nodes)
         .velocityDecay(0.40)
         .force("r", d3.forceRadial(function (d) {
-        var r = { Media: 113, Geography: 45, Cross_domain: 150, User_generated: 208, Linguistics: 256,
-            Government: 318, Publications: 372, Social_networking: 182, Life_sciences: 422 };
-        return r[d.group];
-    }).strength(1))
+            var r = { Media: 113, Geography: 45, Cross_domain: 150, User_generated: 208, Linguistics: 256,
+                      Government: 318, Publications: 372, Social_networking: 182, Life_sciences: 422 };
+            return r[d.group];
+            }).strength(1))
         .force("colisao", d3.forceCollide(function (d) { return d.radius; }).strength(1))
         .stop();
     //for (var i = 0; i < 450; ++i)
     // 1.15 ~= 345 times
     for (var i = 0, n = Math.ceil(1.15 * Math.log(simulation.alphaMin()) / Math.log(1 - simulation.alphaDecay())); i < n; ++i)
         simulation.tick();
+    
     links = svg.append("g")
         .attr("class", "links");
     nodes = svg.append("g")
